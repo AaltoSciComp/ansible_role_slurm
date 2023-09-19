@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: slurm_controller
+    image: rockylinux:9
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      remote_tmp: /tmp
+  inventory:
+    group_vars:
+      all:
+        slurm_build_rpm: true
+verifier:
+  name: ansible

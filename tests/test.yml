@@ -1,0 +1,6 @@
+---
+- name: Test ansible_role_slurm
+  hosts: localhost
+  remote_user: root
+  roles:
+    - aaltoscicomp.ansible_role_slurm

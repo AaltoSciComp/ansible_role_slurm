@@ -1,0 +1,6 @@
+---
+# tasks file for ansible_role_slurm
+
+- name: 'Include install tasks'
+  ansible.builtin.include_tasks:
+    file: "install.yml"

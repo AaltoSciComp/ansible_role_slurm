@@ -1,0 +1,6 @@
+---
+
+- name: Build slurm rpms
+  ansible.builtin.include_tasks:
+    file: "rpmbuild.yml"
+  when: slurm_build_rpm and (ansible_hostname == slurm_rpm_host)

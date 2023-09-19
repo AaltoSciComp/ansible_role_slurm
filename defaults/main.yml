@@ -1,0 +1,31 @@
+---
+# defaults file for ansible_role_slurm
+
+slurm_build_rpm: false
+
+slurm_version: '23.02.4'
+
+slurm_src_url: 'https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2'
+
+slurm_calculate_checksum: true
+
+slurm_rpmbuild_features:
+  ucx:
+  hwloc:
+  pmix:
+  numa:
+  mysql:
+  lua:
+  slurmrestd:
+  pam:
+  jwt:
+
+slurm_checksums:
+  '23.02.4': "sha1:5ea4dabca78cd48611caf100e052a954f659516c"
+  '22.05.9': "sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb"
+
+slurm_user_uid: 202
+
+slurm_rpm_host: slurm_controller
+
+slurm_build_dir: /tmp/slurm_build
