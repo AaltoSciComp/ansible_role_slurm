@@ -1,0 +1,31 @@
+---
+# Check that services are loaded
+
+- name: Check that munge is running
+  ansible.builtin.systemd_service:
+    name: munge
+    state: started
+
+- name: Check that mysql is running
+  ansible.builtin.systemd_service:
+    name: "{{ slurmdbd_mysql_service }}"
+    state: started
+  when: "'slurmdbd' in slurm_host_roles"
+
+- name: Check that slurmdbd is running
+  ansible.builtin.systemd_service:
+    name: slurmdbd
+    state: started
+  when: "'slurmdbd' in slurm_host_roles"
+
+- name: Check that slurmctld is running
+  ansible.builtin.systemd_service:
+    name: slurmctld
+    state: started
+  when: "'slurmctld' in slurm_host_roles"
+
+- name: Check that slurmd is running
+  ansible.builtin.systemd_service:
+    name: slurmd
+    state: started
+  when: "'compute' in slurm_host_roles"

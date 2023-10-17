@@ -1,0 +1,92 @@
+---
+- name: Set defaults for build variables
+  ansible.builtin.set_fact:
+    slurm_build_dependencies: "{{ slurm_default_dependencies['build'] }}"
+    slurm_build_flags: ''
+
+- name: Determine additional build flags
+  ansible.builtin.set_fact:
+    slurm_build_flags: "{{ slurm_build_flags }} {{ item.value['build_flag'] | default(slurm_default_build_flags[item.key]) | default('') }}"
+  loop: "{{ slurm_rpmbuild_features | dict2items }}"
+  when: slurm_rpmbuild_features | length > 0
+
+- name: Determine additional dependencies
+  ansible.builtin.set_fact:
+    slurm_build_dependencies: "{{ slurm_build_dependencies + item.value['dependencies'] | default(slurm_default_dependencies[item.key]) | default([]) }}"
+  loop: "{{ slurm_rpmbuild_features | dict2items }}"
+  when: slurm_rpmbuild_features | length > 0
+
+- name: Build pmix rpms
+  ansible.builtin.import_tasks:
+    file: "rpmbuild.yml"
+  vars:
+    rpmbuild_package_name: pmix
+    rpmbuild_package_version: "{{ pmix_version }}"
+    rpmbuild_calculate_checksum: "{{ pmix_calculate_checksum }}"
+    rpmbuild_checksum: "{{ pmix_checksums[pmix_version] | default('') }}"
+    rpmbuild_extra_dependencies: []
+    rpmbuild_build_flags: ""
+    rpmbuild_spec_template: pmix.spec.j2
+    rpmbuild_src_url: "{{ pmix_src_url }}"
+  when: slurm_build_pmix
+
+- name: Find built pmix
+  ansible.builtin.find:
+    paths: ~/rpmbuild/RPMS/x86_64
+    patterns: 'pmix*.rpm'
+  register: pmix_rpm_find
+  when: slurm_build_pmix
+
+- name: Get pmix rpms
+  ansible.builtin.set_fact:
+    pmix_rpms: "{{ pmix_rpms | default([]) + [item['path']] }}"
+  loop: "{{ pmix_rpm_find.files }}"
+  when: slurm_build_pmix and pmix_rpm_find.files | length > 0
+
+- name: Install built pmix
+  ansible.builtin.dnf:
+    name: "{{ pmix_rpms }}"
+    state: present
+    disable_gpg_check: true
+  when: slurm_build_pmix and pmix_rpm_find.files | length > 0
+
+- name: Build slurm rpms
+  ansible.builtin.import_tasks:
+    file: "rpmbuild.yml"
+  vars:
+    rpmbuild_package_name: slurm
+    rpmbuild_package_version: "{{ slurm_version }}"
+    rpmbuild_calculate_checksum: "{{ slurm_calculate_checksum }}"
+    rpmbuild_checksum: "{{ slurm_checksums[slurm_version] | default('') }}"
+    rpmbuild_extra_dependencies: "{{ slurm_build_dependencies }}"
+    rpmbuild_build_flags: "{{ slurm_build_flags }}"
+    rpmbuild_spec_template: slurm.spec.j2
+    rpmbuild_src_url: "{{ slurm_src_url }}"
+
+- name: Find RPM files
+  ansible.builtin.find:
+    paths: ~/rpmbuild/RPMS/x86_64
+    patterns: '*.rpm'
+  when: slurm_rpm_fetchdir | length > 0
+  register: slurm_rpm_find
+
+- name: Fetch RPMs
+  ansible.builtin.fetch:
+    src: "{{ item['path'] }}"
+    dest: "{{ slurm_rpm_fetchdir }}/"
+    flat: true
+  when: (slurm_rpm_fetchdir | length > 0) and (slurm_rpm_find.matched > 0)
+  loop: "{{ slurm_rpm_find.files }}"
+
+- name: Create munge key
+  ansible.builtin.shell:
+    cmd: "dd if=/dev/random bs=1 count=1024 > ~/munge.key"
+    creates: "~/munge.key"
+  when: (slurm_mungekey_path | length > 0) and slurm_create_mungekey
+
+- name: Fetch munge key
+  ansible.builtin.fetch:
+    src: "~/munge.key"
+    dest: "{{ slurm_mungekey_path }}"
+    flat: true
+  when: (slurm_mungekey_path | length > 0) and slurm_create_mungekey

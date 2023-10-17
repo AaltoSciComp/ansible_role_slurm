@@ -1,0 +1,28 @@
+---
+
+- name: Install repo dependencies
+  ansible.builtin.package:
+    name:
+      - createrepo
+      - httpd
+    state: present
+
+- name: Create repo directory
+  ansible.builtin.file:
+    path: "{{ slurm_rpm_repodir }}"
+    owner: apache
+    group: apache
+    mode: '0755'
+    state: directory
+
+- name: Copy Slurm RPMs
+  ansible.builtin.copy:
+    src: "~/rpmbuild/RPMS/x86_64"
+    dest: "{{ slurm_rpm_repodir }}"
+    remote_src: yes
+    owner: apache
+    group: apache
+    mode: 'u+rwX,g+rX,o+rX'
+  notify:
+    - Create RPM repository
+    - Start httpd

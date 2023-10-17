@@ -1,13 +1,25 @@
 ---
 # defaults file for ansible_role_slurm
 
-slurm_build_rpm: false
 
 slurm_version: '23.02.4'
+pmix_version: '4.2.6'
+
+# ----------------------------
+# Slurm build settings
+# ----------------------------
+
+slurm_build_rpm: false
 
 slurm_src_url: 'https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2'
 
+slurm_build_pmix: true
+
+pmix_src_url: 'https://github.com/openpmix/openpmix/releases/download/v{{ pmix_version }}/pmix-{{ pmix_version }}.tar.bz2'
+
 slurm_calculate_checksum: true
+
+pmix_calculate_checksum: true
 
 slurm_rpmbuild_features:
   ucx:
@@ -19,13 +31,73 @@ slurm_rpmbuild_features:
   slurmrestd:
   pam:
   jwt:
+  bpf:
 
 slurm_checksums:
   '23.02.4': "sha1:5ea4dabca78cd48611caf100e052a954f659516c"
   '22.05.9': "sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb"
 
+pmix_checksums:
+  '4.2.6': "sha1:c66a6c2ce73dcb3a83109ade87b2cd6ef2e4395b"
+
 slurm_user_uid: 202
 
-slurm_rpm_host: slurm_controller
+# --------------------
+# Slurm build settings
+# --------------------
+
+slurm_createrepo: false
+slurm_create_mungekey: false
 
 slurm_build_dir: /tmp/slurm_build
+
+slurm_rpm_repodir: /var/www/html/slurm_repo
+
+slurm_rpm_fetchdir: ''
+slurm_mungekey_path: ''
+
+# ----------------------
+# Slurm install settings
+# ----------------------
+
+slurm_repo_name: slurm
+
+slurm_repo_baseurl: ''
+
+slurm_rpm_suffix: ''
+
+slurm_host_roles: []
+
+slurm_log_dir: /var/log/slurm
+
+slurm_state_save_location: /var/spool/slurm
+
+# ----------------------------
+# Slurm configuration settings
+# ----------------------------
+
+slurmdbd_mysql_root_password: 'password'
+slurmdb_password: 'password'
+
+slurm_innodb_buffer_pool_size: "1024M"
+slurm_innodb_log_file_size: "64M"
+slurm_innodb_log_wait_timeout: "900"
+slurmdbd_mysql_service: 'mariadb'
+
+slurm_slurm_conf_template: 'files/slurm.conf.j2'
+slurm_slurmdbd_conf_template: 'files/slurmdbd.conf.j2'
+slurm_cgroup_conf_template: 'files/cgroup.conf.j2'
+slurm_topology_conf_template: 'files/topology.conf.j2'
+
+slurm_prolog_scripts:
+  - files/prolog_placeholder.sh.j2
+slurm_epilog_scripts:
+  - files/epilog_placeholder.sh.j2
+
+# ------------------------------------------------------------
+# Extra parameters that can be used in configuration templates
+# ------------------------------------------------------------
+
+slurm_cluster_name: cluster
+slurmctld_hosts: slurm_controller
+slurmdbd_host: slurm_database

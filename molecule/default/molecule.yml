@@ -4,9 +4,69 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: slurm_controller
-    image: rockylinux:9
+  - name: builder
+    image: rockylinux/rockylinux:9-ubi-init
     pre_build_image: true
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
+    networks:
+      - name: slurm_network
+  - name: controller
+    image: rockylinux/rockylinux:9-ubi-init
+    pre_build_image: true
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
+    networks:
+      - name: slurm_network
+  - name: database
+    image: rockylinux/rockylinux:9-ubi-init
+    pre_build_image: true
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
+    networks:
+      - name: slurm_network
+  - name: restapi
+    image: rockylinux/rockylinux:9-ubi-init
+    pre_build_image: true
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
+    networks:
+      - name: slurm_network
+  - name: compute1
+    image: rockylinux/rockylinux:9-ubi-init
+    pre_build_image: true
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
+    networks:
+      - name: slurm_network
+  - name: compute2
+    image: rockylinux/rockylinux:9-ubi-init
+    pre_build_image: true
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
+    networks:
+      - name: slurm_network
+  - name: submit
+    image: rockylinux/rockylinux:9-ubi-init
+    pre_build_image: true
+    privileged: True
+    volume_mounts:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
+    networks:
+      - name: slurm_network
 provisioner:
   name: ansible
   config_options:
@@ -16,5 +76,35 @@ provisioner:
     group_vars:
       all:
         slurm_build_rpm: true
+        slurm_createrepo: true
+        slurm_create_mungekey: true
+        slurm_repo_baseurl: "http://builder/slurm_repo/"
+        slurm_rpm_fetchdir: "/tmp/slurm"
+        slurm_mungekey_path: "/tmp/munge.key"
+        slurmctld_hosts: controller
+        slurmdbd_host: database
+    host_vars:
+      builder:
+        slurm_host_roles:
+          - build_host
+          - repo_host
+      controller:
+        slurm_host_roles:
+          - slurmctld
+      database:
+        slurm_host_roles:
+          - slurmdbd
+      restapi:
+        slurm_host_roles:
+          - slurmrestd
+      compute1:
+        slurm_host_roles:
+          - compute
+      compute2:
+        slurm_host_roles:
+          - compute
+      submit:
+        slurm_host_roles:
+          - submit
 verifier:
   name: ansible

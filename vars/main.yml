@@ -3,6 +3,7 @@
 
 slurm_default_dependencies:
   build:
+    - dbus-devel
     - lua
     - lua-devel
   ucx:
@@ -26,6 +27,8 @@ slurm_default_dependencies:
     - pam-devel
   jwt:
     - libjwt-devel
+  bpf:
+    - kernel-headers
 
 slurm_default_build_flags:
   ucx:        '--with ucx'
@@ -36,3 +39,26 @@ slurm_default_build_flags:
   lua:        '--with lua'
   slurmrestd: '--with slurmrestd'
   jwt:        '--with jwt'
+
+slurm_packages:
+  slurm:
+    - munge
+    - munge-libs
+    - slurm
+    - slurm-devel
+    - slurm-torque
+    - slurm-pam_slurm
+    - slurm-libpmi
+    - slurm-contribs
+    - slurm-perlapi
+  compute:
+    - slurm-slurmd
+  slurmctld:
+    - slurm-slurmctld
+  slurmdbd:
+    - python3-mysqlclient
+    - mariadb
+    - mariadb-server
+    - slurm-slurmdbd
+  slurmrestd:
+    - slurm-slurmrestd

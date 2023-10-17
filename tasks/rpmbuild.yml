@@ -1,7 +1,7 @@
 ---
 
 - name: Enable dnf plugins
-  ansible.builtin.package:
+  ansible.builtin.dnf:
     name: dnf-plugins-core
     state: present
 
@@ -11,9 +11,8 @@
     creates: ~/.ansible.crb-enabled
 
 - name: Install development tools
-  ansible.builtin.package:
+  ansible.builtin.dnf:
     name:
-      - epel-release
       - rpmdevtools
     state: present
 
@@ -25,122 +24,95 @@
 - name: Verify that checksum is defined
   ansible.builtin.assert:
     that:
-      - slurm_checksums[slurm_version] | default('') != ''
-  when: slurm_calculate_checksum
+      - rpmbuild_checksum | default('') != ''
+  when: rpmbuild_calculate_checksum
 
 - name: Register source code archive name
   ansible.builtin.set_fact:
-    slurm_src: "{{ slurm_src_url | basename }}"
+    rpmbuild_src: "{{ rpmbuild_src_url | basename }}"
+    rpmbuild_spec: "~/rpmbuild/SPECS/{{ rpmbuild_spec_template | replace('.j2', '') }}"
 
 - name: Check if source code exists
   ansible.builtin.stat:
-    path: '~/rpmbuild/SOURCES/{{ slurm_src }}'
+    path: '~/rpmbuild/SOURCES/{{ rpmbuild_src }}'
     get_checksum: true
-  register: slurm_src_check
+  register: rpmbuild_src_check
 
 - name: Obtain source code
   ansible.builtin.get_url:
-    url: '{{ slurm_src_url }}'
-    dest: '~/rpmbuild/SOURCES/{{ slurm_src }}'
+    url: '{{ rpmbuild_src_url }}'
+    dest: '~/rpmbuild/SOURCES/{{ rpmbuild_src }}'
     mode: '644'
-    checksum: '{{ slurm_calculate_checksum | ternary(slurm_checksums[slurm_version], "") }}'
-  when: not slurm_src_check.stat.exists
+    checksum: '{{ rpmbuild_calculate_checksum | ternary(rpmbuild_checksum, "") }}'
+  when: not rpmbuild_src_check.stat.exists
 
 - name: Template spec file
   ansible.builtin.template:
-    src: slurm.spec.j2
-    dest: '~/rpmbuild/SPECS/slurm.spec'
+    src: "{{ rpmbuild_spec_template }}"
+    dest: "{{ rpmbuild_spec }}"
     owner: root
     group: root
     mode: '0644'
-
-- name: Copy configuration files
-  ansible.builtin.copy:
-    src: '{{ item }}'
-    dest: '~/rpmbuild/SOURCES'
-    owner: root
-    group: root
-    mode: '0644'
-  with_items:
-    - slurm.conf
-    - slurmdbd.conf
 
 - name: Install basic build dependencies
   ansible.builtin.shell:
-    cmd: 'dnf -y builddep ~/rpmbuild/SPECS/slurm.spec && echo "Slurm dependencies installed by ansible_role_slurm" > ~/.ansible.slurm-dependencies-installed'
-    creates: ~/.ansible.slurm-dependencies-installed
+    cmd: 'dnf -y builddep {{ rpmbuild_spec }} && echo "Dependencies installed by ansible_role_slurm" > ~/.ansible.{{ rpmbuild_package_name }}-dependencies-installed'
+    creates: "~/.ansible.{{ rpmbuild_package_name }}-dependencies-installed"
   ignore_errors: true
-  register: slurm_builddep_cmd
+  register: rpmbuild_builddep_cmd
 
 - name: Debug dependency installation (stdout)
   ansible.builtin.debug:
-    msg: "{{ slurm_builddep_cmd.stdout.split('\n') }}"
+    msg: "{{ rpmbuild_builddep_cmd.stdout.split('\n') }}"
     verbosity: 1
-  when: slurm_builddep_cmd.stdout is defined
+  when: rpmbuild_builddep_cmd.stdout is defined
 
 - name: Debug dependency installation (stderr)
   ansible.builtin.debug:
-    msg: "{{ slurm_builddep_cmd.stderr.split('\n') }}"
+    msg: "{{ rpmbuild_builddep_cmd.stderr.split('\n') }}"
     verbosity: 1
-  when: slurm_builddep_cmd.stderr is defined
+  when: rpmbuild_builddep_cmd.stderr is defined
 
 - name: Verify dependency installation
   ansible.builtin.assert:
     that:
-      - slurm_builddep_cmd.rc == 0
-
-- name: Set defaults for build variables
-  ansible.builtin.set_fact:
-    slurm_build_dependencies: "{{ slurm_default_dependencies['build'] }}"
-    slurm_build_flags: ''
-
-- name: Determine additional dependencies
-  ansible.builtin.set_fact:
-    slurm_build_dependencies: "{{ slurm_build_dependencies + item.value['dependencies'] | default(slurm_default_dependencies[item.key]) | default([]) }}"
-  loop: "{{ slurm_rpmbuild_features | dict2items }}"
-  when: slurm_rpmbuild_features | length > 0
+      - rpmbuild_builddep_cmd.rc == 0
 
 - name: Debug additional dependencies
   ansible.builtin.debug:
-    msg: "{{ slurm_build_dependencies }}"
+    msg: "{{ rpmbuild_extra_dependencies }}"
     verbosity: 1
 
 - name: Install additional dependencies
-  ansible.builtin.package:
-    name: "{{ slurm_build_dependencies }}"
+  ansible.builtin.dnf:
+    name: "{{ rpmbuild_extra_dependencies }}"
     state: present
 
-- name: Determine additional build flags
-  ansible.builtin.set_fact:
-    slurm_build_flags: "{{ slurm_build_flags }} {{ item.value['build_flag'] | default(slurm_default_build_flags[item.key]) | default('') }}"
-  loop: "{{ slurm_rpmbuild_features | dict2items }}"
-  when: slurm_rpmbuild_features | length > 0
-
-- name: Debug additional dependencies
+- name: Debug build flags
   ansible.builtin.debug:
-    msg: "{{ slurm_build_flags }}"
+    msg: "{{ rpmbuild_build_flags }}"
     verbosity: 1
 
 - name: Build RPMs
   ansible.builtin.command:
-    cmd: "rpmbuild -ba ~/rpmbuild/SPECS/slurm.spec {{ slurm_build_flags }}"
-    creates: '~/rpmbuild/RPMS/x86_64/slurm-{{ slurm_version }}-1.el9.x86_64.rpm'
+    cmd: "rpmbuild -ba {{ rpmbuild_spec }} {{ rpmbuild_build_flags }}"
+    creates: '~/rpmbuild/RPMS/x86_64/{{ rpmbuild_package_name }}-{{ rpmbuild_package_version }}-1.el{{ ansible_distribution_major_version }}.x86_64.rpm'
   ignore_errors: true
-  register: slurm_rpmbuild_cmd
+  register: rpmbuild_cmd
 
 - name: Debug rpmbuild (stdout)
   ansible.builtin.debug:
-    msg: "{{ slurm_rpmbuild_cmd.stdout.split('\n') }}"
+    msg: "{{ rpmbuild_cmd.stdout.split('\n') }}"
     verbosity: 1
-  when: slurm_rpmbuild_cmd.stdout is defined
+  when: rpmbuild_cmd.stdout is defined
 
 - name: Debug rpmbuild (stderr)
   ansible.builtin.debug:
-    msg: "{{ slurm_rpmbuild_cmd.stderr.split('\n') }}"
+    msg: "{{ rpmbuild_cmd.stderr.split('\n') }}"
     verbosity: 1
-  when: slurm_rpmbuild_cmd.stderr is defined
+  when: rpmbuild_cmd.stderr is defined
 
 - name: Verify rpmbuild
   ansible.builtin.assert:
     that:
-      - slurm_rpmbuild_cmd.rc == 0
+      - rpmbuild_cmd.rc == 0

@@ -1,5 +1,18 @@
 ---
-- name: Converge
+- name: Converge slurm rpm host
+  hosts: builder
+  tasks:
+    # replace these tasks with whatever you find suitable to test
+    - name: Copy something to test use of synchronize module
+      ansible.builtin.copy:
+        src: /etc/hosts
+        dest: /tmp/hosts-from-controller
+        mode: "0644"
+    - name: "Include aaltoscicomp.ansible_role_slurm"
+      ansible.builtin.include_role:
+        name: "aaltoscicomp.ansible_role_slurm"
+
+- name: Converge all hosts
   hosts: all
   tasks:
     # replace these tasks with whatever you find suitable to test
@@ -11,3 +24,38 @@
     - name: "Include aaltoscicomp.ansible_role_slurm"
       ansible.builtin.include_role:
         name: "aaltoscicomp.ansible_role_slurm"
+
+- name: Create test user
+  hosts: all
+  tasks:
+    - name: Add testuser group
+      ansible.builtin.group:
+        name: testuser
+        gid: 2000
+        state: present
+    - name: Create test user
+      ansible.builtin.user:
+        name: testuser
+        uid: 2000
+        group: testuser
+        create_home: true
+
+- name: Add test user to slurm
+  hosts: controller
+  tasks:
+    - name: Add test slurm account
+      ansible.builtin.command:
+        cmd: sacctmgr -i create account name=test
+      register: test_account_cmd
+      changed_when: test_account_cmd.rc == 0
+      failed_when:
+        - test_account_cmd.rc != 0
+        - "'Nothing new added' not in test_account_cmd.stdout"
+    - name: Add testuser to test slurm account
+      ansible.builtin.command:
+        cmd: sacctmgr -i create user name=testuser account=test
+      register: test_add_cmd
+      changed_when: test_add_cmd.rc == 0
+      failed_when:
+        - test_add_cmd.rc != 0
+        - "'Nothing new added' not in test_add_cmd.stdout"

@@ -1,6 +1,70 @@
 ---
 
-- name: Build slurm rpms
-  ansible.builtin.include_tasks:
-    file: "rpmbuild.yml"
-  when: slurm_build_rpm and (ansible_hostname == slurm_rpm_host)
+- name: Add slurm repository
+  ansible.builtin.yum_repository:
+    name: "{{ slurm_repo_name }}"
+    description: Slurm repository (managed by ansible_role_slurm)
+    baseurl: "{{ slurm_repo_baseurl }}"
+    gpgcheck: no
+  when: slurm_repo_name | length > 0
+
+- name: Install slurm
+  ansible.builtin.dnf:
+    name: "{{ slurm_packages['slurm'] }}"
+    state: present
+    update_cache: yes
+  notify:
+    - Start munge
+
+- name: Install slurmd
+  ansible.builtin.package:
+    name: "{{ slurm_packages['compute'] }}"
+    state: present
+  when: "'compute' in slurm_host_roles"
+  notify:
+    - Start slurmd
+
+- name: Install slurmdbd
+  ansible.builtin.package:
+    name: "{{ slurm_packages['slurmdbd'] }}"
+    state: present
+  when: "'slurmdbd' in slurm_host_roles"
+  notify:
+    - Start mysql
+    - Initialize mysql
+    - Start slurmdbd
+
+- name: Install slurmctld
+  ansible.builtin.dnf:
+    name: "{{ slurm_packages['slurmctld'] }}"
+    state: present
+    update_cache: yes
+  when: "'slurmctld' in slurm_host_roles"
+  notify:
+    - Start slurmctld
+    - Add slurm cluster
+
+- name: Create slurm log directory
+  ansible.builtin.file:
+    path: "{{ slurm_log_dir }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: '0750'
+
+- name: Create slurm configuration directory
+  ansible.builtin.file:
+    path: /etc/slurm
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create slurm state directory
+  ansible.builtin.file:
+    path: "{{ slurm_state_save_location }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: '0755'
+  when: "'slurmctld' in slurm_host_roles"

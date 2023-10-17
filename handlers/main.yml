@@ -1,2 +1,162 @@
 ---
 # handlers file for ansible_role_slurm
+
+- name: Reload systemd services
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  retries: 3
+  delay: 10
+
+- name: Create RPM repository
+  ansible.builtin.command:
+    cmd: "createrepo {{ slurm_rpm_repodir }}"
+    creates: "{{ slurm_rpm_repodir }}/repodata/repomd.xml"
+
+- name: Start httpd
+  ansible.builtin.systemd_service:
+    name: httpd
+    state: started
+    enabled: yes
+    masked: no
+  retries: 3
+  delay: 5
+
+- name: Start munge
+  ansible.builtin.systemd_service:
+    name: munge
+    state: started
+    enabled: yes
+    masked: no
+  retries: 3
+  delay: 5
+
+- name: Start mysql
+  ansible.builtin.systemd_service:
+    name: "{{ slurmdbd_mysql_service }}"
+    state: started
+    enabled: true
+  retries: 3
+  delay: 5
+
+- name: Set mysql root user password
+  community.mysql.mysql_user:
+    name: root
+    password: "{{ slurmdbd_mysql_root_password }}"
+    check_implicit_admin: true
+  retries: 3
+  delay: 5
+  listen: Initialize mysql
+
+- name: Create slurm_acct_db
+  community.mysql.mysql_db:
+    name: slurm_acct_db
+    state: present
+  retries: 3
+  delay: 5
+  listen: Initialize mysql
+
+- name: Create slurm mysql user
+  community.mysql.mysql_user:
+    name: "slurm"
+    host: "{{ item }}"
+    password: "{{ slurmdb_password }}"
+    priv: "slurm_acct_db.*:ALL"
+    append_privs: true
+    state: present
+  with_items:
+    - "localhost"
+    - "{{ slurmdbd_host }}"
+  retries: 3
+  delay: 5
+  listen: Initialize mysql
+
+- name: Start slurmdbd
+  ansible.builtin.systemd_service:
+    name: slurmdbd
+    state: started
+    enabled: true
+  retries: 3
+  delay: 5
+
+- name: Wait for slurmdbd
+  ansible.builtin.pause:
+    seconds: 10
+  listen: Add slurm cluster
+  notify: Check for slurm clusters existence
+
+- name: Check for slurm clusters existence
+  ansible.builtin.command: sacctmgr -n show cluster {{ slurm_cluster_name | quote }}
+  register: slurm_cluster_check
+  changed_when: slurm_cluster_name not in slurm_cluster_check.stdout
+  retries: 5
+  delay: 10
+  notify: Add slurm cluster with sacctmgr
+
+- name: Add slurm cluster with sacctmgr
+  ansible.builtin.command: sacctmgr -i add cluster {{ slurm_cluster_name | quote }}
+  register: slurm_cluster_added
+  retries: 5
+  delay: 10
+  changed_when: slurm_cluster_added.rc == 0
+
+- name: Start slurmctld
+  ansible.builtin.systemd_service:
+    name: slurmctld
+    state: started
+    enabled: true
+  retries: 3
+  delay: 5
+
+- name: Start slurmd
+  ansible.builtin.systemd_service:
+    name: slurmd
+    state: started
+    enabled: true
+  retries: 3
+  delay: 5
+  when: "'compute' in slurm_host_roles"
+
+- name: Restart munge
+  ansible.builtin.systemd_service:
+    name: munge
+    state: restarted
+    enabled: true
+  retries: 3
+  delay: 5
+
+- name: Restart mysql
+  ansible.builtin.systemd_service:
+    name: "{{ slurmdbd_mysql_service }}"
+    state: restarted
+    enabled: true
+  retries: 3
+  delay: 5
+
+- name: Restart slurmdbd
+  ansible.builtin.systemd_service:
+    name: slurmdbd
+    state: restarted
+    enabled: true
+  retries: 3
+  delay: 10
+  when: "'slurmdbd' in slurm_host_roles"
+
+- name: Restart slurmctld
+  ansible.builtin.systemd_service:
+    name: slurmctld
+    state: restarted
+    enabled: true
+    no_block: true
+  retries: 3
+  delay: 10
+  when: "'slurmctld' in slurm_host_roles"
+
+- name: Restart slurmd
+  ansible.builtin.systemd_service:
+    name: slurmd
+    state: restarted
+    enabled: true
+    no_block: true
+  retries: 3
+  delay: 10
+  when: "'compute' in slurm_host_roles"

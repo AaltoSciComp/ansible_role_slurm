@@ -1,6 +1,47 @@
 ---
 # tasks file for ansible_role_slurm
 
-- name: 'Include install tasks'
+- name: Enable epel
+  ansible.builtin.dnf:
+    name:
+      - epel-release
+    state: present
+
+- name: Build slurm
+  ansible.builtin.include_tasks:
+    file: "build.yml"
+  when: slurm_build_rpm and ("build_host" in slurm_host_roles)
+  tags: build_slurm
+
+- name: Create slurm repo
+  ansible.builtin.include_tasks:
+    file: "createrepo.yml"
+  when: slurm_build_rpm and slurm_createrepo and ("repo_host" in slurm_host_roles)
+  tags: build_slurm
+
+- name: Install slurm
   ansible.builtin.include_tasks:
     file: "install.yml"
+  when: ('submit' in slurm_host_roles) or
+        ('compute' in slurm_host_roles) or
+        ('slurmdbd' in slurm_host_roles) or
+        ('slurmctld' in slurm_host_roles) or
+        ('slurmrestd' in slurm_host_roles)
+
+- name: Configure slurm
+  ansible.builtin.include_tasks:
+    file: "configure.yml"
+  when: ('submit' in slurm_host_roles) or
+        ('compute' in slurm_host_roles) or
+        ('slurmdbd' in slurm_host_roles) or
+        ('slurmctld' in slurm_host_roles) or
+        ('slurmrestd' in slurm_host_roles)
+
+- name: Enable services
+  ansible.builtin.include_tasks:
+    file: "services.yml"
+  when: ('submit' in slurm_host_roles) or
+        ('compute' in slurm_host_roles) or
+        ('slurmdbd' in slurm_host_roles) or
+        ('slurmctld' in slurm_host_roles) or
+        ('slurmrestd' in slurm_host_roles)
