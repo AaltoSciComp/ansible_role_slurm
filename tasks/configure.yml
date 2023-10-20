@@ -8,18 +8,6 @@
     group: munge
     mode: '0400'
 
-- name: Configure slurmd unit file
-  ansible.builtin.lineinfile:
-    path: "/usr/lib/systemd/system/slurmd.service"
-    regexp: ^(ExecStart=/usr/sbin/slurmd .*)$
-    line: \g<1> --conf-server {{ slurmctld_hosts }}
-    backrefs: yes
-    state: present
-  when: "'compute' in slurm_host_roles"
-  notify:
-    - Reload systemd services
-    - Restart slurmd
-
 - name: Template .my.cnf for root
   ansible.builtin.template:
     src: "root.my.cnf.j2"
@@ -70,6 +58,15 @@
     - Restart slurmctld
     - Restart slurmd
 
+- name: Template epilog script
+  ansible.builtin.template:
+    src: "{{ slurm_epilog_script }}"
+    dest: /usr/bin/epilog
+    owner: root
+    group: root
+    mode: 0755
+  when: "'compute' in slurm_host_roles"
+
 - name: Create prolog/epilog-directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -101,6 +98,17 @@
   loop: "{{ slurm_epilog_scripts }}"
   when: "'compute' in slurm_host_roles"
 
+- name: Configure slurmd unit file sysconfig
+  ansible.builtin.template:
+    src: "slurmd_sysconfig.j2"
+    dest: /etc/sysconfig/slurmd
+    owner: root
+    group: root
+    mode: 0644
+  when: "'compute' in slurm_host_roles"
+  notify:
+    - Restart slurmd
+
 - name: Template cgroup.conf
   ansible.builtin.template:
     src: "{{ slurm_cgroup_conf_template }}"
@@ -128,6 +136,35 @@
     - Restart munge
     - Restart slurmctld
     - Restart slurmd
+
+- name: Configure pam system-auth
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/system-auth
+    line: "-account     sufficient    pam_slurm_adopt.so action_adopt_failure=deny action_generic_failure=deny"
+    insertbefore: "^account.*required.*pam_access.so.*"
+  when: "'compute' in slurm_host_roles and slurm_enable_pam_slurm_adopt"
+
+- name: Configure pam slurm module
+  ansible.builtin.template:
+    src: 'slurm_pam.j2'
+    dest: /etc/pam.d/slurm
+    owner: root
+    group: root
+    mode: 0644
+  when: "'compute' in slurm_host_roles and slurm_enable_pam_slurm"
+
+- name: Template profile.d scripts for configless setup
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/profile.d/{{ item | basename | replace('.j2', '') }}"
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  when: "('submit' in slurm_host_roles or 'compute' in slurm_host_roles) and slurm_enable_configless_profiled"
+  loop:
+    - "slurm_conf.sh.j2"
+    - "slurm_conf.csh.j2"
 
 - name: Run handlers
   ansible.builtin.meta: flush_handlers

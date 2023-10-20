@@ -89,10 +89,17 @@ slurm_slurmdbd_conf_template: 'files/slurmdbd.conf.j2'
 slurm_cgroup_conf_template: 'files/cgroup.conf.j2'
 slurm_topology_conf_template: 'files/topology.conf.j2'
 
+slurm_epilog_script: 'files/epilog.j2'
+
 slurm_prolog_scripts:
-  - files/prolog_placeholder.sh.j2
+  - 'files/prolog_placeholder.sh.j2'
 slurm_epilog_scripts:
-  - files/epilog_placeholder.sh.j2
+  - 'files/epilog_placeholder.sh.j2'
+
+slurm_enable_pam_slurm: True
+slurm_enable_pam_slurm_adopt: True
+
+slurm_enable_configless_profiled: True
 
 # ------------------------------------------------------------
 # Extra parameters that can be used in configuration templates
