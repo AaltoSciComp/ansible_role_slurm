@@ -140,7 +140,7 @@
 - name: Configure pam system-auth
   ansible.builtin.lineinfile:
     path: /etc/pam.d/system-auth
-    line: "-account     sufficient    pam_slurm_adopt.so action_adopt_failure=deny action_generic_failure=deny"
+    line: "{{ slurm_pam_adopt_setting }}"
     insertbefore: "^account.*required.*pam_access.so.*"
   when: "'compute' in slurm_host_roles and slurm_enable_pam_slurm_adopt"
 

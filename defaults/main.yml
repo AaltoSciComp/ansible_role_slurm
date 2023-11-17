@@ -46,10 +46,8 @@ slurm_user_uid: 202
 # Slurm build settings
 # --------------------
 
-slurm_createrepo: false
+slurm_createrepo: true
 slurm_create_mungekey: false
-
-slurm_build_dir: /tmp/slurm_build
 
 slurm_rpm_repodir: /var/www/html/slurm_repo
 
@@ -63,8 +61,6 @@ slurm_mungekey_path: ''
 slurm_repo_name: slurm
 
 slurm_repo_baseurl: ''
-
-slurm_rpm_suffix: ''
 
 slurm_host_roles: []
 
@@ -96,10 +92,11 @@ slurm_prolog_scripts:
 slurm_epilog_scripts:
   - 'files/epilog_placeholder.sh.j2'
 
-slurm_enable_pam_slurm: True
-slurm_enable_pam_slurm_adopt: True
+slurm_enable_pam_slurm: true
+slurm_enable_pam_slurm_adopt: true
+slurm_pam_adopt_setting: '-account     sufficient    pam_slurm_adopt.so action_adopt_failure=deny action_generic_failure=deny'
 
-slurm_enable_configless_profiled: True
+slurm_enable_configless_profiled: true
 
 # ------------------------------------------------------------
 # Extra parameters that can be used in configuration templates
