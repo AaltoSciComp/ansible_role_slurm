@@ -35,8 +35,8 @@ slurm_rpmbuild_features:
   nvml:
 
 slurm_checksums:
-  '23.02.4': "sha1:5ea4dabca78cd48611caf100e052a954f659516c"
-  '22.05.9': "sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb"
+  '23.02.4': 'sha1:5ea4dabca78cd48611caf100e052a954f659516c'
+  '22.05.9': 'sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb'
 
 pmix_checksums:
   '4.2.6': 'sha1:c66a6c2ce73dcb3a83109ade87b2cd6ef2e4395b'
@@ -81,9 +81,9 @@ slurm_state_save_location: /var/spool/slurm
 slurmdbd_mysql_root_password: 'password'
 slurmdb_password: 'password'
 
-slurm_innodb_buffer_pool_size: "1024M"
-slurm_innodb_log_file_size: "64M"
-slurm_innodb_log_wait_timeout: "900"
+slurm_innodb_buffer_pool_size: '1024M'
+slurm_innodb_log_file_size: '64M'
+slurm_innodb_log_wait_timeout: '900'
 slurmdbd_mysql_service: 'mariadb'
 
 slurm_slurm_conf_template: 'files/slurm.conf.j2'

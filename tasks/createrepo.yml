@@ -9,7 +9,7 @@
 
 - name: Create repo directory
   ansible.builtin.file:
-    path: "{{ slurm_rpm_repodir }}"
+    path: '{{ slurm_rpm_repodir }}'
     owner: apache
     group: apache
     mode: '0755'
@@ -17,8 +17,8 @@
 
 - name: Copy Slurm RPMs
   ansible.builtin.copy:
-    src: "~/rpmbuild/RPMS/x86_64"
-    dest: "{{ slurm_rpm_repodir }}"
+    src: '~/rpmbuild/RPMS/x86_64'
+    dest: '{{ slurm_rpm_repodir }}'
     remote_src: yes
     owner: apache
     group: apache

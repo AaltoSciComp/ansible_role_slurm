@@ -2,9 +2,9 @@
 
 - name: Add slurm repository
   ansible.builtin.yum_repository:
-    name: "{{ slurm_repo_name }}"
+    name: '{{ slurm_repo_name }}'
     description: Slurm repository (managed by ansible_role_slurm)
-    baseurl: "{{ slurm_repo_baseurl }}"
+    baseurl: '{{ slurm_repo_baseurl }}'
     gpgcheck: no
   when: slurm_repo_name | length > 0
 
@@ -46,7 +46,7 @@
 
 - name: Create slurm log directory
   ansible.builtin.file:
-    path: "{{ slurm_log_dir }}"
+    path: '{{ slurm_log_dir }}'
     state: directory
     owner: slurm
     group: slurm
@@ -62,7 +62,7 @@
 
 - name: Create slurm state directory
   ansible.builtin.file:
-    path: "{{ slurm_state_save_location }}"
+    path: '{{ slurm_state_save_location }}'
     state: directory
     owner: slurm
     group: slurm

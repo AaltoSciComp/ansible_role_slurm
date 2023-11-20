@@ -8,7 +8,7 @@
 
 - name: Check that mysql is running
   ansible.builtin.systemd_service:
-    name: "{{ slurmdbd_mysql_service }}"
+    name: '{{ slurmdbd_mysql_service }}'
     state: started
   when: "'slurmdbd' in slurm_host_roles"
 

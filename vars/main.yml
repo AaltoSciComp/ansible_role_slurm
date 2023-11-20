@@ -30,7 +30,7 @@ slurm_default_dependencies:
   bpf:
     - kernel-headers
   nvml:
-    - 'cuda-nvml-devel-{{ slurm_cuda_version | replace(".", "-") }}'
+    - "cuda-nvml-devel-{{ slurm_cuda_version | replace('.', '-') }}"
     - lz4
 
 slurm_default_build_flags:

@@ -7,7 +7,7 @@
 
 - name: Enable CRB
   ansible.builtin.shell:
-    cmd: 'dnf config-manager --enable crb && echo "CRB enabled by ansible_role_slurm" > ~/.ansible.crb-enabled'
+    cmd: "dnf config-manager --enable crb && echo 'CRB enabled by ansible_role_slurm' > ~/.ansible.crb-enabled"
     creates: ~/.ansible.crb-enabled
 
 - name: Install development tools
@@ -29,7 +29,7 @@
 
 - name: Register source code archive name
   ansible.builtin.set_fact:
-    rpmbuild_src: "{{ rpmbuild_src_url | basename }}"
+    rpmbuild_src: '{{ rpmbuild_src_url | basename }}'
     rpmbuild_spec: "~/rpmbuild/SPECS/{{ rpmbuild_spec_template | replace('.j2', '') }}"
 
 - name: Check if source code exists
@@ -43,21 +43,21 @@
     url: '{{ rpmbuild_src_url }}'
     dest: '~/rpmbuild/SOURCES/{{ rpmbuild_src }}'
     mode: '644'
-    checksum: '{{ rpmbuild_calculate_checksum | ternary(rpmbuild_checksum, "") }}'
+    checksum: "{{ rpmbuild_calculate_checksum | ternary(rpmbuild_checksum, '') }}"
   when: not rpmbuild_src_check.stat.exists
 
 - name: Template spec file
   ansible.builtin.template:
-    src: "{{ rpmbuild_spec_template }}"
-    dest: "{{ rpmbuild_spec }}"
+    src: '{{ rpmbuild_spec_template }}'
+    dest: '{{ rpmbuild_spec }}'
     owner: root
     group: root
     mode: '0644'
 
 - name: Install basic build dependencies
   ansible.builtin.shell:
-    cmd: 'dnf -y builddep {{ rpmbuild_spec }} && echo "Dependencies installed by ansible_role_slurm" > ~/.ansible.{{ rpmbuild_package_name }}-dependencies-installed'
-    creates: "~/.ansible.{{ rpmbuild_package_name }}-dependencies-installed"
+    cmd: "dnf -y builddep {{ rpmbuild_spec }} && echo 'Dependencies installed by ansible_role_slurm' > ~/.ansible.{{ rpmbuild_package_name }}-dependencies-installed"
+    creates: '~/.ansible.{{ rpmbuild_package_name }}-dependencies-installed'
   ignore_errors: true
   register: rpmbuild_builddep_cmd
 
@@ -80,22 +80,22 @@
 
 - name: Debug additional dependencies
   ansible.builtin.debug:
-    msg: "{{ rpmbuild_extra_dependencies }}"
+    msg: '{{ rpmbuild_extra_dependencies }}'
     verbosity: 1
 
 - name: Install additional dependencies
   ansible.builtin.dnf:
-    name: "{{ rpmbuild_extra_dependencies }}"
+    name: '{{ rpmbuild_extra_dependencies }}'
     state: present
 
 - name: Debug build flags
   ansible.builtin.debug:
-    msg: "{{ rpmbuild_build_flags }}"
+    msg: '{{ rpmbuild_build_flags }}'
     verbosity: 1
 
 - name: Build RPMs
   ansible.builtin.command:
-    cmd: "rpmbuild -ba {{ rpmbuild_spec }} {{ rpmbuild_build_flags }}"
+    cmd: 'rpmbuild -ba {{ rpmbuild_spec }} {{ rpmbuild_build_flags }}'
     creates: '~/rpmbuild/RPMS/x86_64/{{ rpmbuild_package_name }}-{{ rpmbuild_package_version }}-1.el{{ ansible_distribution_major_version }}.x86_64.rpm'
   ignore_errors: true
   register: rpmbuild_cmd

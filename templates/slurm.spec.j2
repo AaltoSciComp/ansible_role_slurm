@@ -160,7 +160,7 @@ BuildRequires: ucx-devel
 %endif
 
 %if %{with nvml} && "%{_with_nvml}" == "--with-nvml"
-BuildRequires: cuda-nvml-devel-{{ slurm_cuda_version | replace(".", "-") }}
+BuildRequires: cuda-nvml-devel-{{ slurm_cuda_version | replace('.', '-') }}
 %global _with_nvml --with-nvml=/usr/local/cuda-{{ slurm_cuda_version }}
 %endif
 
