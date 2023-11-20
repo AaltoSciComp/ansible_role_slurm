@@ -159,6 +159,11 @@ BuildRequires: ucx-devel
 %global ucx_version %(rpm -q ucx-devel --qf "%{RPMTAG_VERSION}")
 %endif
 
+%if %{with nvml} && "%{_with_nvml}" == "--with-nvml"
+BuildRequires: cuda-nvml-devel-{{ slurm_cuda_version | replace(".", "-") }}
+%global _with_nvml --with-nvml=/usr/local/cuda-{{ slurm_cuda_version }}
+%endif
+
 %if %{with jwt}
 BuildRequires: libjwt-devel >= 1.10.0
 Requires: libjwt >= 1.10.0

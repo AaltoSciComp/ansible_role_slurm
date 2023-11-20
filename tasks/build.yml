@@ -1,4 +1,13 @@
 ---
+
+- name: Enable CUDA repository
+  ansible.builtin.yum_repository:
+    name: '{{ slurm_nvml_repo_name }}'
+    description: NVIDIA CUDA YUM Repo
+    baseurl: '{{ slurm_nvml_repo }}'
+    gpgkey: '{{ slurm_nvml_repo_key }}'
+  when: slurm_nvml_repo | length > 0 and 'nvml' in slurm_rpmbuild_features
+
 - name: Set defaults for build variables
   ansible.builtin.set_fact:
     slurm_build_dependencies: "{{ slurm_default_dependencies['build'] }}"

@@ -29,6 +29,9 @@ slurm_default_dependencies:
     - libjwt-devel
   bpf:
     - kernel-headers
+  nvml:
+    - 'cuda-nvml-devel-{{ slurm_cuda_version | replace(".", "-") }}'
+    - lz4
 
 slurm_default_build_flags:
   ucx:        '--with ucx'
@@ -39,6 +42,7 @@ slurm_default_build_flags:
   lua:        '--with lua'
   slurmrestd: '--with slurmrestd'
   jwt:        '--with jwt'
+  nvml:       '--with nvml'
 
 slurm_packages:
   slurm:
