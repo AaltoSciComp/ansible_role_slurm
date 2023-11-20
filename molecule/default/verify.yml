@@ -1,10 +1,15 @@
 ---
 # This is an example playbook to execute Ansible tests.
 
-- name: Verify
-  hosts: all
-  gather_facts: false
+- name: Run test job
+  hosts: submit
+  become: true
+  become_user: testuser
   tasks:
-    - name: Example assertion
-      ansible.builtin.assert:
-        that: true
+    - name: Run test as test user
+      ansible.builtin.command:
+        cmd: bash -l -c "srun -p compute -w compute1 cat /etc/hostname"
+      register: test_run
+      changed_when: test_run.rc == 0
+      failed_when:
+        - "'compute1' not in test_run.stdout"

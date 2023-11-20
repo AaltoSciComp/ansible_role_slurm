@@ -12,8 +12,8 @@
       ansible.builtin.include_role:
         name: "aaltoscicomp.ansible_role_slurm"
 
-- name: Converge all hosts
-  hosts: all
+- name: Converge all other hosts
+  hosts: all,!builder
   tasks:
     # replace these tasks with whatever you find suitable to test
     - name: Copy something to test use of synchronize module
@@ -59,3 +59,11 @@
       failed_when:
         - test_add_cmd.rc != 0
         - "'Nothing new added' not in test_add_cmd.stdout"
+
+- name: Install sudo on submit node
+  hosts: submit
+  tasks:
+    - name: Install sudo
+      ansible.builtin.package:
+        name: sudo
+        state: present
