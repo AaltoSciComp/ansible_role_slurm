@@ -86,6 +86,8 @@ slurm_innodb_log_file_size: '64M'
 slurm_innodb_log_wait_timeout: '900'
 slurmdbd_mysql_service: 'mariadb'
 
+slurm_cli_filter_template: 'files/cli_filter.lua'
+slurm_job_submit_template: 'files/job_submit.lua'
 slurm_slurm_conf_template: 'files/slurm.conf.j2'
 slurm_slurmdbd_conf_template: 'files/slurmdbd.conf.j2'
 slurm_cgroup_conf_template: 'files/cgroup.conf.j2'

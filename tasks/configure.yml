@@ -137,6 +137,34 @@
     - Restart slurmctld
     - Restart slurmd
 
+- name: Template cli_filter.lua-plugin
+  ansible.builtin.template:
+    src: '{{ slurm_cli_filter_template }}'
+    dest: /etc/slurm/cli_filter.lua
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  when: "'slurmctld' in slurm_host_roles"
+  notify:
+    - Restart munge
+    - Restart slurmctld
+    - Restart slurmd
+
+- name: Template job_submit.lua-plugin
+  ansible.builtin.template:
+    src: '{{ slurm_job_submit_template }}'
+    dest: /etc/slurm/job_submit.lua
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  when: "'slurmctld' in slurm_host_roles"
+  notify:
+    - Restart munge
+    - Restart slurmctld
+    - Restart slurmd
+
 - name: Configure pam system-auth
   ansible.builtin.lineinfile:
     path: /etc/pam.d/system-auth
