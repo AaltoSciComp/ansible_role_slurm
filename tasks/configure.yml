@@ -109,6 +109,20 @@
   notify:
     - Restart slurmd
 
+- name: Template gres.conf
+  ansible.builtin.template:
+    src: '{{ slurm_gres_conf_template }}'
+    dest: /etc/slurm/gres.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  when: "'slurmctld' in slurm_host_roles"
+  notify:
+    - Restart munge
+    - Restart slurmctld
+    - Restart slurmd
+
 - name: Template cgroup.conf
   ansible.builtin.template:
     src: '{{ slurm_cgroup_conf_template }}'
