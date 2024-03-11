@@ -150,6 +150,19 @@
   retries: 3
   delay: 10
   when: "'slurmctld' in slurm_host_roles"
+  notify: Wait for reload
+
+- name: Wait for reload
+  ansible.builtin.pause:
+    seconds: 30
+  notify: Reconfig Slurm
+
+- name: Reconfig Slurm
+  ansible.builtin.command:
+    cmd: scontrol reconfig
+  register: scontrol_reconfig
+  changed_when: scontrol_reconfig.rc == 0
+  when: "'slurmctld' in slurm_host_roles and slurmctld_hosts | split(',') == inventory_hostname "
 
 - name: Restart slurmd
   ansible.builtin.systemd_service:
