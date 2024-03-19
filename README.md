@@ -57,10 +57,11 @@ This role has been tested on the following operating systems:
 | `slurm_slurm_conf_template`         |`'files/slurm.conf.j2'`          | Configuration template for slurm.conf                                                                                 |
 | `slurm_slurmdbd_conf_template`      |`'files/slurmdbd.conf.j2'`       | Configuration template for slurmdbd.conf                                                                              |
 | `slurm_cgroup_conf_template`        |`'files/cgroup.conf.j2'`         | Configuration template for cgroup.conf                                                                                |
+| `slurm_gres_conf_template`          |`'files/gres.conf.j2'`           | Configuration template for gres.conf                                                                                  |
 | `slurm_topology_conf_template`      |`'files/topology.conf.j2'`       | Configuration template for topology.conf                                                                              |
 | `slurm_epilog_script`               |`'files/epilog.j2'`              | Template for epilog script. This will be placed in `/usr/bin/epilog`.                                                 |
-| `slurm_prolog_scripts`              |`[files/prolog_placeholder.sh.j2]` | Templates for prolog scripts. These will be placed in `/usr/local/libexec/slurm/prolog.d/`.                        |
-| `slurm_epilog_scripts`              |`[files/epilog_placeholder.sh.j2]` | Templates for epilog scripts. These will be placed in `/usr/local/libexec/slurm/epilog.d/`.                        |
+| `slurm_prolog_scripts`              |`[files/prolog_placeholder.sh.j2]` | Templates for prolog scripts. These will be placed in `/usr/local/libexec/slurm/prolog.d/`.                         |
+| `slurm_epilog_scripts`              |`[files/epilog_placeholder.sh.j2]` | Templates for epilog scripts. These will be placed in `/usr/local/libexec/slurm/epilog.d/`.                         |
 | `slurm_enable_pam_slurm`            | `true`                          | Will this role enable `/etc/pam.d/slurm`                                                                              |
 | `slurm_enable_pam_slurm_adopt`      | `true`                          | Should this role insert `slurm_pam_adopt_setting` into `/etc/pam.d/system-auth` to enable `pam_slurm_adopt.so`.       |
 | `slurm_pam_adopt_setting`           | `'-account     sufficient    pam_slurm_adopt.so action_adopt_failure=deny action_generic_failure=deny'` | Line that will enable `pam_slurm_adopt.so.`   |
