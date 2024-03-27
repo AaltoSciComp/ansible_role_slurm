@@ -28,4 +28,6 @@
   ansible.builtin.systemd_service:
     name: slurmd
     state: started
-  when: "'compute' in slurm_host_roles"
+  when:
+    - "'compute' in slurm_host_roles"
+    - slurmd_restart
