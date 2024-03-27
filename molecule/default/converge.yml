@@ -50,7 +50,7 @@
       changed_when: test_account_cmd.rc == 0
       failed_when:
         - test_account_cmd.rc != 0
-        - "'Nothing new added' not in test_account_cmd.stdout"
+        - "'Already existing account' not in test_account_cmd.stdout"
     - name: Add testuser to test slurm account
       ansible.builtin.command:
         cmd: sacctmgr -i create user name=testuser account=test
@@ -58,7 +58,7 @@
       changed_when: test_add_cmd.rc == 0
       failed_when:
         - test_add_cmd.rc != 0
-        - "'Nothing new added' not in test_add_cmd.stdout"
+        - "'Nothing added' not in test_add_cmd.stdout"
 
 - name: Install sudo on submit node
   hosts: submit

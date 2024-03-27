@@ -13,16 +13,7 @@ platforms:
     command: "/sbin/init"
     networks:
       - name: slurm_network
-  - name: controller1
-    image: rockylinux/rockylinux:9-ubi-init
-    pre_build_image: true
-    privileged: True
-    volume_mounts:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
-    command: "/sbin/init"
-    networks:
-      - name: slurm_network
-  - name: controller2
+  - name: controller
     image: rockylinux/rockylinux:9-ubi-init
     pre_build_image: true
     privileged: True
@@ -90,17 +81,14 @@ provisioner:
         slurm_repo_baseurl: "http://builder/slurm_repo/"
         slurm_rpm_fetchdir: "/tmp/slurm"
         slurm_mungekey_path: "/tmp/munge.key"
-        slurmctld_hosts: controller1,controller2
+        slurmctld_hosts: controller
         slurmdbd_host: database
     host_vars:
       builder:
         slurm_host_roles:
           - build_host
           - repo_host
-      controller1:
-        slurm_host_roles:
-          - slurmctld
-      controller2:
+      controller:
         slurm_host_roles:
           - slurmctld
       database:

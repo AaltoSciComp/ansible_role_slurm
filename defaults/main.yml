@@ -2,8 +2,8 @@
 # defaults file for ansible_role_slurm
 
 
-slurm_version: '23.02.4'
-pmix_version: '4.2.6'
+slurm_version: '23.11.4'
+pmix_version: '4.2.9'
 
 # ----------------------------
 # Slurm build settings
@@ -35,10 +35,12 @@ slurm_rpmbuild_features:
   nvml:
 
 slurm_checksums:
+  '23.11.4': 'sha1:bf61907b203762d25cc6052fdb47e1142c9260a2'
   '23.02.4': 'sha1:5ea4dabca78cd48611caf100e052a954f659516c'
   '22.05.9': 'sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb'
 
 pmix_checksums:
+  '4.2.9': 'sha1:7702e5984970de506e31cda072152ce90fffd0e4'
   '4.2.6': 'sha1:c66a6c2ce73dcb3a83109ade87b2cd6ef2e4395b'
 
 slurm_nvml_repo: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/'
