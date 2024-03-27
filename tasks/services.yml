@@ -30,4 +30,4 @@
     state: started
   when:
     - "'compute' in slurm_host_roles"
-    - slurmd_restart
+    - slurmd_start
