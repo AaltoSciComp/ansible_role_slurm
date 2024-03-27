@@ -162,7 +162,9 @@
     cmd: scontrol reconfig
   register: scontrol_reconfig
   changed_when: scontrol_reconfig.rc == 0
-  when: "'slurmctld' in slurm_host_roles and slurmctld_hosts | split(',') == inventory_hostname "
+  when:
+    - "'slurmctld' in slurm_host_roles"
+    - slurmctld_hosts | split(',') == inventory_hostname
 
 - name: Restart slurmd
   ansible.builtin.systemd_service:
@@ -172,4 +174,6 @@
     no_block: true
   retries: 3
   delay: 10
-  when: "'compute' in slurm_host_roles"
+  when:
+    - "'compute' in slurm_host_roles"
+    - slurmd_restart

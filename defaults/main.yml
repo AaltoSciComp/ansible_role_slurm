@@ -76,6 +76,8 @@ slurm_log_dir: /var/log/slurm
 
 slurm_state_save_location: /var/spool/slurm
 
+slurmd_restart: true
+
 # ----------------------------
 # Slurm configuration settings
 # ----------------------------

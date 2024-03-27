@@ -179,6 +179,15 @@
     - Restart slurmctld
     - Restart slurmd
 
+- name: Enable slurmd
+  ansible.builtin.systemd_service:
+    name: slurmd
+    enabled: true
+    no_block: true
+  retries: 3
+  delay: 10
+  when: "'compute' in slurm_host_roles"
+
 - name: Configure pam system-auth
   ansible.builtin.lineinfile:
     path: /etc/pam.d/system-auth
