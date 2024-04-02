@@ -9,8 +9,8 @@ slurm_default_dependencies:
   ucx:
     - ucx-devel
   pmix:
-    - pmix
-    - pmix-devel
+    - "pmix-{{ pmix_version }}"
+    - "pmix-devel-{{ pmix_version }}"
   slurmrestd:
     - http-parser-devel
     - json-c-devel
@@ -46,26 +46,26 @@ slurm_default_build_flags:
 
 slurm_packages:
   slurm:
-    - pmix
-    - pmix-devel
+    - "pmix-{{ pmix_version }}"
+    - "pmix-devel-{{ pmix_version }}"
     - munge
     - munge-libs
-    - slurm
-    - slurm-devel
-    - slurm-torque
-    - slurm-pam_slurm
-    - slurm-libpmi
-    - slurm-contribs
-    - slurm-perlapi
+    - "slurm-{{ slurm_version }}"
+    - "slurm-devel-{{ slurm_version }}"
+    - "slurm-torque-{{ slurm_version }}"
+    - "slurm-pam_slurm-{{ slurm_version }}"
+    - "slurm-libpmi-{{ slurm_version }}"
+    - "slurm-contribs-{{ slurm_version }}"
+    - "slurm-perlapi-{{ slurm_version }}"
   compute:
-    - slurm-slurmd
-    - slurm-pam_slurm
+    - "slurm-slurmd-{{ slurm_version }}"
+    - "slurm-pam_slurm-{{ slurm_version }}"
   slurmctld:
-    - slurm-slurmctld
+    - "slurm-slurmctld-{{ slurm_version }}"
   slurmdbd:
     - python3-mysqlclient
     - mariadb
     - mariadb-server
-    - slurm-slurmdbd
+    - "slurm-slurmdbd-{{ slurm_version }}"
   slurmrestd:
-    - slurm-slurmrestd
+    - "slurm-slurmrestd-{{ slurm_version }}"
