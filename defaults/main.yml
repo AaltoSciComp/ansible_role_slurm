@@ -78,6 +78,15 @@ slurm_state_save_location: /var/spool/slurm
 
 slurmd_start: true
 
+# -------------------
+# Slurm tool settings
+# -------------------
+
+slurm_tool_install: false
+
+slurm_tool_repo: https://github.com/AaltoSciComp/slurm_tool.git
+slurm_tool_version: v1.0.1
+
 # ----------------------------
 # Slurm configuration settings
 # ----------------------------

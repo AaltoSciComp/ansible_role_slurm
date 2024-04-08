@@ -83,6 +83,7 @@ provisioner:
         slurm_mungekey_path: "/tmp/munge.key"
         slurmctld_hosts: controller
         slurmdbd_host: database
+        slurm_tool_install: true
     host_vars:
       builder:
         slurm_host_roles:

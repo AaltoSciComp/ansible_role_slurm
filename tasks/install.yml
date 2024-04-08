@@ -68,3 +68,19 @@
     group: slurm
     mode: '0755'
   when: "'slurmctld' in slurm_host_roles"
+
+- name: Install slurm-tool
+  when: slurm_tool_install and ( 'slurmctld' in slurm_host_roles or 'submit' in slurm_host_roles or 'compute' in slurm_host_roles )
+  block:
+    - name: Clone slurm_tool
+      ansible.builtin.git:
+        repo: "{{ slurm_tool_repo }}"
+        dest: /tmp/slurm_tool
+        version: "{{ slurm_tool_version }}"
+    - name: Copy slurm tool script
+      ansible.builtin.copy:
+        src: /tmp/slurm_tool/slurm
+        dest: /usr/local/bin/slurm
+        owner: root
+        group: root
+        mode: '0755'

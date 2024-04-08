@@ -43,6 +43,9 @@ This role has been tested on the following operating systems:
 | `slurm_host_roles`                  | `[]`                            | List of roles that this host should play in the cluster. Possible options are `build_host`, `repo_host`, `slurmctld`, `slurmrestd`, `slurmdbd`, `compute` and `submit` |
 | `slurm_log_dir`                     | `/var/log/slurm`                | Log directory for slurm                                                                                               |
 | `slurm_state_save_location`         | `/var/spool/slurm`              | Location for slurm states                                                                                             |
+| `slurm_tool_install`                | `false`                         | Whether [slurm_tool](https://github.com/AaltoSciComp/slurm_tool/tree/master) should be installed on submit, compute and slurmctld hosts. |
+| `slurm_tool_repo`                   | `https://github.com/AaltoSciComp/slurm_tool.git` | Repo for slurm_tool.                                                                                 |
+| `slurm_tool_version`                | `v1.0.1`                        | Version or commit of slurm_tool.                                                                                      |
 
 ### Slurm configuration settings
 
