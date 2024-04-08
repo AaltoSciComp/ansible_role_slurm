@@ -45,7 +45,7 @@ This role has been tested on the following operating systems:
 | `slurm_state_save_location`         | `/var/spool/slurm`              | Location for slurm states                                                                                             |
 | `slurm_tool_install`                | `false`                         | Whether [slurm_tool](https://github.com/AaltoSciComp/slurm_tool/tree/master) should be installed on submit, compute and slurmctld hosts. |
 | `slurm_tool_repo`                   | `https://github.com/AaltoSciComp/slurm_tool.git` | Repo for slurm_tool.                                                                                 |
-| `slurm_tool_version`                | `v1.0.1`                        | Version or commit of slurm_tool.                                                                                      |
+| `slurm_tool_version`                | `1.0.1`                         | Version or commit of slurm_tool.                                                                                      |
 
 ### Slurm configuration settings
 

@@ -85,7 +85,7 @@ slurmd_start: true
 slurm_tool_install: false
 
 slurm_tool_repo: https://github.com/AaltoSciComp/slurm_tool.git
-slurm_tool_version: v1.0.1
+slurm_tool_version: 1.0.1
 
 # ----------------------------
 # Slurm configuration settings

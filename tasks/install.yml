@@ -72,6 +72,10 @@
 - name: Install slurm-tool
   when: slurm_tool_install and ( 'slurmctld' in slurm_host_roles or 'submit' in slurm_host_roles or 'compute' in slurm_host_roles )
   block:
+    - name: Install git for slurm_tool installation
+      ansible.builtin.dnf:
+        name: git
+        state: present
     - name: Clone slurm_tool
       ansible.builtin.git:
         repo: "{{ slurm_tool_repo }}"
@@ -81,6 +85,7 @@
       ansible.builtin.copy:
         src: /tmp/slurm_tool/slurm
         dest: /usr/local/bin/slurm
+        remote_src: true
         owner: root
         group: root
         mode: '0755'
