@@ -217,5 +217,13 @@
     - 'slurm_conf.sh.j2'
     - 'slurm_conf.csh.j2'
 
+- name: Add a SLURM_CONF_SERVER line to /etc/security/pam_env.conf for configless setup
+  ansible.builtin.lineinfile:
+    path: /etc/security/pam_env.conf
+    line: 'SLURM_CONF_SERVER DEFAULT="{{ slurmctld_hosts }}"'
+    search_string: 'SLURM_CONF_SERVER'
+    state: present
+  when: "('submit' in slurm_host_roles or 'compute' in slurm_host_roles) and slurm_enable_configless_profiled"
+
 - name: Run handlers
   ansible.builtin.meta: flush_handlers
