@@ -76,6 +76,10 @@
       ansible.builtin.dnf:
         name: git
         state: present
+    - name: Remove slurm_tool temporary folder /tmp/slurm_tool
+      ansible.builtin.file:
+        path: "/tmp/slurm_tool"
+        state: absent
     - name: Clone slurm_tool
       ansible.builtin.git:
         repo: "{{ slurm_tool_repo }}"
