@@ -18,6 +18,7 @@ This role has been tested on the following operating systems:
 | `slurm_src_url`                     | `"'https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2'"`                            | Download url for Slurm source code              |
 | `slurm_calculate_checksum`          | `true`                          | Calculate checksum for slurm source code                                                                              |
 | `slurm_user_uid`                    | `202`                           | Slurm user UID                                                                                                        |
+| `slurm_munge_user_uid`              | `203`                           | munge user UID                                                                                                        |
 | `pmix_version`                      | `4.2.6`                         | PMIx version                                                                                                          |
 | `slurm_build_pmix`                  | `true`                          | Build PMIx RPMs                                                                                                       |
 | `pmix_calculate_checksum`           | `true`                          | Calculate checksum for pmix source code                                                                               |

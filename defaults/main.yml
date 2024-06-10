@@ -49,6 +49,7 @@ slurm_nvml_repo_name: 'cuda'
 slurm_cuda_version: '12.3'
 
 slurm_user_uid: 202
+slurm_munge_user_uid: 203
 
 # --------------------
 # Slurm build settings

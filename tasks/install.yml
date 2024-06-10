@@ -1,5 +1,50 @@
 ---
 
+- name: add slurm unix group
+  group:
+    name: slurm
+    system: no
+    state: present
+    gid: "{{ slurm_user_gid|default(slurm_user_uid) }}"
+  register: reg_slurm_unixgroup
+  when: slurm_user_uid is defined
+
+- name: add slurm unix user
+  user:
+    name: slurm
+    shell: /sbin/nologin
+    createhome: no
+    system: no
+    append: yes
+    group: slurm
+    state: present
+    uid: "{{ slurm_user_uid }}"
+  register: reg_slurm_unixuser
+  when: slurm_user_uid is defined
+
+- name: add munge unix group
+  group:
+    name: munge
+    system: no
+    state: present
+    gid: "{{ slurm_munge_user_gid|default(slurm_munge_user_uid) }}"
+  register: reg_munge_unixgroup
+  when: slurm_munge_user_uid is defined
+
+- name: add munge unix user
+  user:
+    name: munge
+    shell: /sbin/nologin
+    createhome: no
+    system: no
+    append: yes
+    group: munge
+    state: present
+    uid: "{{ slurm_munge_user_uid }}"
+  register: reg_munge_unixuser
+  when: slurm_munge_user_uid is defined
+
+
 - name: Add slurm repository
   ansible.builtin.yum_repository:
     name: '{{ slurm_repo_name }}'
