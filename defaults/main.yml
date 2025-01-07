@@ -33,6 +33,7 @@ slurm_rpmbuild_features:
   jwt:
   bpf:
   nvml:
+  libcurl:
 
 slurm_checksums:
   '23.11.4': 'sha1:bf61907b203762d25cc6052fdb47e1142c9260a2'
@@ -120,6 +121,8 @@ slurm_enable_pam_slurm_adopt: true
 slurm_pam_adopt_setting: '-account     sufficient    pam_slurm_adopt.so action_adopt_failure=deny action_generic_failure=deny'
 
 slurm_enable_configless_profiled: true
+
+slurm_prolog_flags: 'X11'
 
 # ------------------------------------------------------------
 # Extra parameters that can be used in configuration templates

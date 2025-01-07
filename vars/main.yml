@@ -33,16 +33,17 @@ slurm_default_dependencies:
     - "cuda-nvml-devel-{{ slurm_cuda_version | replace('.', '-') }}"
     - lz4
 
+# --with mysql is obsolete. rpmbuild logic requires some sql-devel to be installed. We have mariadb-devel.
 slurm_default_build_flags:
   ucx:        '--with ucx'
   hwloc:      '--with hwloc'
   pmix:       '--with pmix'
   numa:       '--with numa'
-  mysql:      '--with mysql'
   lua:        '--with lua'
   slurmrestd: '--with slurmrestd'
   jwt:        '--with jwt'
   nvml:       '--with nvml'
+  libcurl:    '--with libcurl'
 
 slurm_packages:
   slurm:
