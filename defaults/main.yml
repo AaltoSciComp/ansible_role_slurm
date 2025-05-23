@@ -124,6 +124,9 @@ slurm_enable_configless_profiled: true
 
 slurm_prolog_flags: 'X11'
 
+slurmrestd_options: '-u slurmrestd -g slurmrestd'
+slurm_enable_jwt: false
+
 # ------------------------------------------------------------
 # Extra parameters that can be used in configuration templates
 # ------------------------------------------------------------

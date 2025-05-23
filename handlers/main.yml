@@ -118,6 +118,16 @@
     - "'compute' in slurm_host_roles"
     - slurmd_start
 
+- name: Start slurmrestd
+  ansible.builtin.systemd_service:
+    name: slurmrestd
+    state: started
+    enabled: true
+  retries: 3
+  delay: 5
+  when:
+    - "'slurmrestd' in slurm_host_roles"
+
 - name: Restart munge
   ansible.builtin.systemd_service:
     name: munge
@@ -179,3 +189,14 @@
   when:
     - "'compute' in slurm_host_roles"
     - slurmd_start
+
+- name: Restart slurmrestd
+  ansible.builtin.systemd_service:
+    name: slurmrestd
+    state: restarted
+    enabled: true
+    no_block: true
+  retries: 3
+  delay: 10
+  when:
+    - "'slurmrestd' in slurm_host_roles"

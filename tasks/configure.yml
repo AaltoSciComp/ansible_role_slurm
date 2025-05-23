@@ -8,6 +8,15 @@
     group: munge
     mode: '0400'
 
+- name: Copy jwt key
+  ansible.builtin.copy:
+    src: '{{ slurm_jwt_keypath }}'
+    dest: '/etc/slurm/jwt_hs256.key'
+    owner: slurm
+    group: slurm
+    mode: '0400'
+  when: slurm_enable_jwt and (('slurmdbd' in slurm_host_roles) or ('slurmctld' in slurm_host_roles))
+
 - name: Template .my.cnf for root
   ansible.builtin.template:
     src: 'root.my.cnf.j2'
@@ -57,6 +66,7 @@
     - Restart slurmdbd
     - Restart slurmctld
     - Restart slurmd
+    - Restart slurmrestd
 
 - name: Template epilog script
   ansible.builtin.template:
@@ -224,6 +234,15 @@
     search_string: 'SLURM_CONF_SERVER'
     state: present
   when: "('submit' in slurm_host_roles or 'compute' in slurm_host_roles) and slurm_enable_configless_profiled"
+
+- name: Add a SLURMRESTD_OPTIONS for slurmrestd defaults
+  ansible.builtin.lineinfile:
+    path: /etc/sysconfig/slurmrestd
+    line: 'SLURMRESTD_OPTIONS="{{ slurmrestd_options }}"'
+    search_string: 'SLURMRESTD_OPTIONS'
+    create: true
+    state: present
+  when: "'slurmrestd' in slurm_host_roles"
 
 - name: Run handlers
   ansible.builtin.meta: flush_handlers

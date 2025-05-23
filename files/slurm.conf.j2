@@ -7,6 +7,10 @@ SlurmUser=slurm
 SlurmctldPort=6817
 SlurmdPort=6818
 AuthType=auth/munge
+{% if slurm_enable_jwt %}
+AuthAltTypes=auth/jwt
+AuthAltParameters=jwt_key=/etc/slurm/jwt_hs256.key
+{% endif %}
 StateSaveLocation={{ slurm_state_save_location }}
 SwitchType=switch/none
 MpiDefault=none

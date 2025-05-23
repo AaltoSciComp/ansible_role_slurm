@@ -10,13 +10,13 @@
   when: slurm_user_uid is defined
 
 - name: add slurm unix user
-  user:
+  ansible.builtin.user:
     name: slurm
     shell: /sbin/nologin
-    createhome: no
+    create_home: no
     system: no
     append: yes
-    group: slurm
+    groups: slurm
     state: present
     uid: "{{ slurm_user_uid }}"
   register: reg_slurm_unixuser
@@ -32,18 +32,36 @@
   when: slurm_munge_user_uid is defined
 
 - name: add munge unix user
-  user:
+  ansible.builtin.user:
     name: munge
     shell: /sbin/nologin
-    createhome: no
+    create_home: no
     system: no
     append: yes
-    group: munge
+    groups: munge
     state: present
     uid: "{{ slurm_munge_user_uid }}"
   register: reg_munge_unixuser
   when: slurm_munge_user_uid is defined
 
+- name: add slurmrestd unix group
+  group:
+    name: slurmrestd
+    system: no
+    state: present
+  register: reg_slurmrestd_unixgroup
+  when: "'slurmrestd' in slurm_host_roles"
+
+- name: add slurmrestd unix user
+  ansible.builtin.user:
+    name: slurmrestd
+    shell: /sbin/nologin
+    create_home: false
+    append: yes
+    groups: slurmrestd
+    state: present
+  register: reg_slurmrestd_unixuser
+  when: "'slurmrestd' in slurm_host_roles"
 
 - name: Add slurm repository
   ansible.builtin.yum_repository:
@@ -88,6 +106,15 @@
   notify:
     - Start slurmctld
     - Add slurm cluster
+
+- name: Install slurmrestd
+  ansible.builtin.dnf:
+    name: "{{ slurm_packages['slurmrestd'] }}"
+    state: present
+    update_cache: yes
+  when: "'slurmrestd' in slurm_host_roles"
+  notify:
+    - Start slurmrestd
 
 - name: Create slurm log directory
   ansible.builtin.file:
