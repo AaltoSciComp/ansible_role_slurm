@@ -66,6 +66,17 @@
     - Restart slurmdbd
     - Restart slurmctld
     - Restart slurmd
+
+- name: Template slurm.conf for rest-api
+  ansible.builtin.template:
+    src: '{{ slurm_slurm_conf_template }}'
+    dest: /etc/slurm/slurm.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  when: "'slurmrestd' in slurm_host_roles"
+  notify:
     - Restart slurmrestd
 
 - name: Template epilog script
