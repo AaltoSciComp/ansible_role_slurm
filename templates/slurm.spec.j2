@@ -334,7 +334,7 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: pmix = %{pmix_version}
 %endif
 %if %{with ucx} && "%{_with_ucx}" == "--with-ucx"
-Requires: ucx = %{ucx_version}
+Requires: ucx >= %{ucx_version}
 %endif
 %description slurmd
 Slurm compute node daemon. Used to launch jobs on compute nodes
