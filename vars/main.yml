@@ -44,6 +44,7 @@ slurm_default_build_flags:
   jwt:        '--with jwt'
   nvml:       '--with nvml'
   libcurl:    '--with libcurl'
+  rsmi:       '--with rsmi'
 
 slurm_packages:
   slurm:
