@@ -87,6 +87,21 @@
   when: (slurm_rpm_fetchdir | length > 0) and (slurm_rpm_find.matched > 0)
   loop: '{{ slurm_rpm_find.files }}'
 
+- name: Find spec files
+  ansible.builtin.find:
+    paths: ~/rpmbuild/SPECS
+    patterns: '*.spec'
+  when: slurm_rpm_fetchdir | length > 0
+  register: slurm_spec_find
+
+- name: Fetch SPECs
+  ansible.builtin.fetch:
+    src: "{{ item['path'] }}"
+    dest: '{{ slurm_rpm_fetchdir }}/'
+    flat: true
+  when: (slurm_rpm_fetchdir | length > 0) and (slurm_spec_find.matched > 0)
+  loop: '{{ slurm_spec_find.files }}'
+
 - name: Create munge key
   ansible.builtin.shell:
     cmd: 'dd if=/dev/random bs=1 count=1024 > ~/munge.key'
