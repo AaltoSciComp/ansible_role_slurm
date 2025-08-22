@@ -195,7 +195,7 @@ BuildRequires: cuda-nvml-devel-{{ slurm_cuda_version | replace('.', '-') }}
 # Scicomp: rocm uses /opt/rocm. 
 %if %{with rsmi} && "%{_with_rsmi}" == "--with-rsmi"
 BuildRequires: rocm-smi-lib
-%global _with_nvml --with-rsmi=/opt/rocm
+%global _with_rsmi --with-rsmi=/opt/rocm
 %endif
 
 %if %{with libcurl}
