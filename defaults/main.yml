@@ -2,7 +2,7 @@
 # defaults file for ansible_role_slurm
 
 
-slurm_version: '23.11.4'
+slurm_version: '25.11.0'
 pmix_version: '4.2.9'
 
 # ----------------------------
@@ -36,6 +36,7 @@ slurm_rpmbuild_features:
   libcurl:
 
 slurm_checksums:
+  '25.11.0': 'sha1:7a0fc39b0836e068f1a4c4a2ba7a32a4c342d909'
   '23.11.4': 'sha1:bf61907b203762d25cc6052fdb47e1142c9260a2'
   '23.02.4': 'sha1:5ea4dabca78cd48611caf100e052a954f659516c'
   '22.05.9': 'sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb'
