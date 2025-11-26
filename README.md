@@ -142,7 +142,7 @@ For a start, to build RPMs only, use the following `slurm.yml` playbook
 
 ```yml
 ---
-
+# Minimal RPM build-only playbook role
 - name: Slurm RPM build host
   hosts: slurm_builder
   vars:
@@ -152,9 +152,11 @@ For a start, to build RPMs only, use the following `slurm.yml` playbook
   roles:
     - ansible_role_slurm
 ```
-where you list a host (compute node) under [slurm_builder] inventory and run it with
+where you list a host (compute node) or a group under [slurm_builder] inventory and run it limited with
 
     ansible-playbook slurm.yml  -lslurm_builder --tags build_slurm
+
+and check `/root/rpmbuild/RPMS/x86_64` therein for later hosting with `- repo_host` or own move elsewhere.
 
 
 License
