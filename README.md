@@ -150,7 +150,7 @@ For a start to build RPMs only use the following `slurm.yml` playbook
   roles:
     - ansible_role_slurm
 ```
-where you list the host (compute node) under [slurm_builder] inventory and run it with
+where you list a host (compute node) under [slurm_builder] inventory and run it with
 
     ansible-playbook slurm.yml  -lslurm_builder --tags build_slurm
 
