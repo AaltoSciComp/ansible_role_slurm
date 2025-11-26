@@ -46,9 +46,9 @@ pmix_checksums:
   '4.2.6': 'sha1:c66a6c2ce73dcb3a83109ade87b2cd6ef2e4395b'
 
 slurm_nvml_repo: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/'
-slurm_nvml_repo_key: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/D42D0685.pub'
+slurm_nvml_repo_key: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/CDF6BA43.pub'
 slurm_nvml_repo_name: 'cuda'
-slurm_cuda_version: '12.3'
+slurm_cuda_version: '13.0'
 
 slurm_user_uid: 202
 slurm_munge_user_uid: 203
