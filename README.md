@@ -138,9 +138,11 @@ To be finalized.
 
 For now see [molecule converge playbook](./molecule/default/converge.yml).
 
-For a start to build RPMs only use the following `slurm.yml` playbook
+For a start, to build RPMs only, use the following `slurm.yml` playbook
 
 ```yml
+---
+
 - name: Slurm RPM build host
   hosts: slurm_builder
   vars:
