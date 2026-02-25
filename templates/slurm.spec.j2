@@ -31,6 +31,7 @@ Source:		%{slurm_source_dir}.tar.bz2
 # build options		.rpmmacros options	change to default action
 # ====================  ====================	========================
 # --prefix		%_prefix path		install path for commands, libraries, etc.
+# --with cgroupv2       %_with_cgroupv2 1       require cgroup v2 support
 # --with cray_shasta	%_with_cray_shasta 1	build for a Cray Shasta system
 # --with slurmrestd	%_with_slurmrestd 1	build slurmrestd
 # --with yaml		%_with_yaml 1		build with yaml serializer
@@ -52,6 +53,7 @@ Source:		%{slurm_source_dir}.tar.bz2
 #
 
 #  Options that are off by default (enable with --with <opt>)
+%bcond_with cgroupv2
 %bcond_with cray_shasta
 %bcond_with slurmrestd
 %bcond_with multiple_slurmd
@@ -99,6 +101,18 @@ BuildRequires: pkg-config
 BuildRequires:  pkgconf
 %else
 BuildRequires:  pkgconfig
+%endif
+%endif
+
+%if %{with cgroupv2}
+Requires: libbpf
+BuildRequires: kernel-headers
+%if %{defined suse_version}
+Requires: dbus-1
+BuildRequires: dbus-1-devel
+%else
+Requires: dbus
+BuildRequires: dbus-devel
 %endif
 %endif
 
@@ -200,13 +214,9 @@ BuildRequires: rocm-smi-lib
 
 %if %{with libcurl}
 %if %{defined suse_version}
-Requires: libcurl
-%else
-%if 0%{?rhel}
-Requires: libcurl
-%else
 Requires: libcurl4
-%endif
+%else
+Requires: libcurl
 %endif
 BuildRequires: libcurl-devel
 %endif
@@ -217,8 +227,8 @@ Requires: libjwt >= 1.10.0
 %endif
 
 %if %{with yaml}
-Requires: libyaml >= 0.2.5
-BuildRequires: libyaml-devel >= 0.2.5
+Requires: libyaml >= 0.1.7
+BuildRequires: libyaml-devel >= 0.1.7
 %endif
 
 %if %{with freeipmi}
@@ -238,7 +248,7 @@ BuildRequires: libselinux-devel
 %define _sysconfdir %_slurm_sysconfdir
 
 #  Allow override of datadir via _slurm_datadir.
-%{!?_slurm_datadir: %global _slurm_datadir %{_prefix}/share}
+%{!?_slurm_datadir: %global _slurm_datadir /usr/share}
 %define _datadir %{_slurm_datadir}
 
 #  Allow override of mandir via _slurm_mandir.
@@ -437,6 +447,7 @@ Provides a REST interface to Slurm.
 	--with-systemdsystemunitdir=%{_unitdir} \
 	--enable-pkgconfig \
 	%{?_without_debug:--disable-debug} \
+        %{?_with_cgroupv2:--enable-cgroupv2} \
 	%{?_with_pam_dir} \
 	%{?_with_mysql_config} \
 	%{?_with_multiple_slurmd:--enable-multiple-slurmd} \
@@ -453,7 +464,6 @@ Provides a REST interface to Slurm.
 	%{?_with_jwt} \
 	%{?_with_yaml} \
 	%{?_with_nvml} \
-	%{?_with_freeipmi} \
 	%{!?with_munge:--without-munge} \
 	%{?_with_cflags}
 
@@ -603,7 +613,7 @@ rm -rf %{buildroot}
 %exclude %{_mandir}/man1/sjobexit*
 %exclude %{_mandir}/man1/sjstat*
 %dir %{_libdir}/slurm/src
-%{_datadir}/bash-completion/completions/slurm_completion.sh
+%{_bashcompdir}/bash-completion/completions/slurm_completion.sh
 #############################################################################
 
 %files example-configs
