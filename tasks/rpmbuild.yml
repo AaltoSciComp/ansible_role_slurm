@@ -96,7 +96,7 @@
 - name: Build RPMs
   ansible.builtin.command:
     cmd: 'rpmbuild -ba {{ rpmbuild_spec }} {{ rpmbuild_build_flags }}'
-    creates: '~/rpmbuild/RPMS/x86_64/{{ rpmbuild_package_name }}-{{ rpmbuild_package_version }}-1.el{{ ansible_distribution_major_version }}.x86_64.rpm'
+    creates: '~/rpmbuild/RPMS/{{ slurm_arch }}/{{ rpmbuild_package_name }}-{{ rpmbuild_package_version }}-1.el{{ ansible_distribution_major_version }}.{{ slurm_arch }}.rpm'
   ignore_errors: true
   register: rpmbuild_cmd
 

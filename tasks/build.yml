@@ -41,7 +41,7 @@
 
 - name: Find built pmix
   ansible.builtin.find:
-    paths: ~/rpmbuild/RPMS/x86_64
+    paths: "~/rpmbuild/RPMS/{{ slurm_arch }}"
     patterns: 'pmix*.rpm'
   register: pmix_rpm_find
   when: slurm_build_pmix
@@ -74,7 +74,7 @@
 
 - name: Find RPM files
   ansible.builtin.find:
-    paths: ~/rpmbuild/RPMS/x86_64
+    paths: "~/rpmbuild/RPMS/{{ slurm_arch }}"
     patterns: '*.rpm'
   when: slurm_rpm_fetchdir | length > 0
   register: slurm_rpm_find

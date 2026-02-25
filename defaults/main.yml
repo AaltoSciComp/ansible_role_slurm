@@ -9,6 +9,8 @@ pmix_version: '4.2.9'
 # Slurm build settings
 # ----------------------------
 
+slurm_arch: "x86_64"
+
 slurm_build_rpm: false
 
 slurm_src_url: 'https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2'
