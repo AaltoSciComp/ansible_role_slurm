@@ -129,6 +129,11 @@ slurm_prolog_flags: 'X11'
 slurmrestd_options: '-u slurmrestd -g slurmrestd'
 slurm_enable_jwt: false
 
+# should the slurm role enable code ready builder and epel?
+# if not, they should be installed outside this role
+slurm_enable_crb: true
+slurm_enable_epel: true
+
 # ------------------------------------------------------------
 # Extra parameters that can be used in configuration templates
 # ------------------------------------------------------------

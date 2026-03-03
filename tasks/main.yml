@@ -6,6 +6,7 @@
     name:
       - epel-release
     state: present
+  when: slurm_enable_epel
 
 - name: Build slurm
   ansible.builtin.include_tasks:

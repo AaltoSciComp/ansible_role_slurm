@@ -9,6 +9,7 @@
   ansible.builtin.shell:
     cmd: "dnf config-manager --enable crb && echo 'CRB enabled by ansible_role_slurm' > ~/.ansible.crb-enabled"
     creates: ~/.ansible.crb-enabled
+  when: slurm_enable_crb
 
 - name: Install development tools
   ansible.builtin.dnf:
