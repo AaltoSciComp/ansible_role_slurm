@@ -79,12 +79,12 @@
   when: slurm_rpm_fetchdir | length > 0
   register: slurm_rpm_find
 
-- name: Fetch RPMs
+- name: Fetch RPMs to local host
   ansible.builtin.fetch:
     src: "{{ item['path'] }}"
     dest: '{{ slurm_rpm_fetchdir }}/'
     flat: true
-  when: (slurm_rpm_fetchdir | length > 0) and (slurm_rpm_find.matched > 0)
+  when: ('podman' not in ansible_connection) and (slurm_rpm_fetchdir | length > 0) and (slurm_rpm_find.matched > 0)
   loop: '{{ slurm_rpm_find.files }}'
 
 - name: Find spec files
@@ -94,12 +94,12 @@
   when: slurm_rpm_fetchdir | length > 0
   register: slurm_spec_find
 
-- name: Fetch SPECs
+- name: Fetch SPECs local host
   ansible.builtin.fetch:
     src: "{{ item['path'] }}"
     dest: '{{ slurm_rpm_fetchdir }}/'
     flat: true
-  when: (slurm_rpm_fetchdir | length > 0) and (slurm_spec_find.matched > 0)
+  when: ('podman' not in ansible_connection) and (slurm_rpm_fetchdir | length > 0) and (slurm_spec_find.matched > 0)
   loop: '{{ slurm_spec_find.files }}'
 
 - name: Create munge key
@@ -108,9 +108,9 @@
     creates: '~/munge.key'
   when: (slurm_mungekey_path | length > 0) and slurm_create_mungekey
 
-- name: Fetch munge key
+- name: Fetch munge key to local host
   ansible.builtin.fetch:
     src: '~/munge.key'
     dest: '{{ slurm_mungekey_path }}'
     flat: true
-  when: (slurm_mungekey_path | length > 0) and slurm_create_mungekey
+  when: ('podman' not in ansible_connection) and (slurm_mungekey_path | length > 0) and slurm_create_mungekey
