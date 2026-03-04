@@ -2,7 +2,7 @@
 # defaults file for ansible_role_slurm
 
 
-slurm_version: '23.11.4'
+slurm_version: '25.11.0'
 pmix_version: '4.2.9'
 
 # ----------------------------
@@ -38,6 +38,7 @@ slurm_rpmbuild_features:
   libcurl:
 
 slurm_checksums:
+  '25.11.0': 'sha1:7a0fc39b0836e068f1a4c4a2ba7a32a4c342d909'
   '23.11.4': 'sha1:bf61907b203762d25cc6052fdb47e1142c9260a2'
   '23.02.4': 'sha1:5ea4dabca78cd48611caf100e052a954f659516c'
   '22.05.9': 'sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb'
@@ -47,9 +48,9 @@ pmix_checksums:
   '4.2.6': 'sha1:c66a6c2ce73dcb3a83109ade87b2cd6ef2e4395b'
 
 slurm_nvml_repo: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/'
-slurm_nvml_repo_key: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/D42D0685.pub'
+slurm_nvml_repo_key: 'https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/CDF6BA43.pub'
 slurm_nvml_repo_name: 'cuda'
-slurm_cuda_version: '12.3'
+slurm_cuda_version: '13.0'
 
 slurm_user_uid: 202
 slurm_munge_user_uid: 203

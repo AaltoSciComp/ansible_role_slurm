@@ -13,8 +13,8 @@ This role has been tested on the following operating systems:
 
 | Variable                            | Default value                   | Description                                                                                                           |
 |-------------------------------------|---------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `slurm_version`                     | `23.02.4`                       | Slurm version                                                                                                         |
-| `slurm_build_rpm`                   | `true`                          | Build Slurm RPMs                                                                                                      |
+| `slurm_version`                     | `25.11.0`                       | Slurm version                                                                                                         |
+| `slurm_build_rpm`                   | `false`                         | Build Slurm RPMs                                                                                                      |
 | `slurm_src_url`                     | `"'https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2'"`                            | Download url for Slurm source code              |
 | `slurm_calculate_checksum`          | `true`                          | Calculate checksum for slurm source code                                                                              |
 | `slurm_user_uid`                    | `202`                           | Slurm user UID                                                                                                        |
@@ -113,6 +113,7 @@ Checksums are listed in these variables:
 
 ```yml
 slurm_checksums:
+  '25.11.0': 'sha1:7a0fc39b0836e068f1a4c4a2ba7a32a4c342d909'
   '23.02.4': "sha1:5ea4dabca78cd48611caf100e052a954f659516c"
   '22.05.9': "sha1:cc853549724375cfab111529f7b7db0cc0dd1bbb"
 
@@ -136,6 +137,27 @@ Example Playbook
 To be finalized.
 
 For now see [molecule converge playbook](./molecule/default/converge.yml).
+
+For a start, to build RPMs only, use the following `slurm.yml` playbook
+
+```yml
+---
+# Minimal RPM build-only playbook role
+- name: Slurm RPM build host
+  hosts: slurm_builder
+  vars:
+    slurm_build_rpm: true
+    slurm_host_roles:
+      - build_host
+  roles:
+    - ansible_role_slurm
+```
+where you list a host (compute node) or a group under [slurm_builder] inventory and run it limited with
+
+    ansible-playbook slurm.yml  -lslurm_builder --tags build_slurm
+
+and check `/root/rpmbuild/RPMS/x86_64` therein for later hosting with `- repo_host` or own move elsewhere.
+
 
 License
 -------
