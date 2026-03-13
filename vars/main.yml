@@ -26,6 +26,7 @@ slurm_default_dependencies:
   pam:
     - pam-devel
   jwt:
+    - epel-release
     - libjwt-devel
   bpf:
     - kernel-headers
