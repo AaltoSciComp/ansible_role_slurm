@@ -15,7 +15,7 @@
 
 - name: Determine additional build flags
   ansible.builtin.set_fact:
-    slurm_build_flags: "{{ slurm_build_flags }} {{ item.value['build_flag'] | default(slurm_default_build_flags[item.key]) | default('') }}"
+    slurm_build_flags: "{{ slurm_build_flags }} {{ item.value | default(slurm_default_build_flags[item.key]) | default('') }}"
   loop: '{{ slurm_rpmbuild_features | dict2items }}'
   when: slurm_rpmbuild_features | length > 0
 
