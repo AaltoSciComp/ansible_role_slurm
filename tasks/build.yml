@@ -64,12 +64,12 @@
     file: 'rpmbuild.yml'
   vars:
     rpmbuild_package_name: slurm
-    rpmbuild_package_version: '{{ slurm_version }}'
-    rpmbuild_calculate_checksum: '{{ slurm_calculate_checksum }}'
+    rpmbuild_package_version: "{{ slurm_version }}"
+    rpmbuild_calculate_checksum: "{{ slurm_calculate_checksum }}"
     rpmbuild_checksum: "{{ slurm_checksums[slurm_version] | default('') }}"
-    rpmbuild_extra_dependencies: '{{ slurm_build_dependencies }}'
-    rpmbuild_build_flags: '{{ slurm_build_flags }}'
-    rpmbuild_spec_template: slurm.spec.j2
+    rpmbuild_extra_dependencies: "{{ slurm_build_dependencies }}"
+    rpmbuild_build_flags: "{{ slurm_build_flags }}"
+    rpmbuild_spec_template: "{{ slurm_spec_template }}"
     rpmbuild_src_url: '{{ slurm_src_url }}'
 
 - name: Find RPM files

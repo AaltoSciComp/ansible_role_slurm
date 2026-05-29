@@ -2,7 +2,7 @@
 # defaults file for ansible_role_slurm
 
 
-slurm_version: '23.11.4'
+slurm_version: '25.11.5'
 pmix_version: '4.2.9'
 
 # ----------------------------
@@ -98,7 +98,7 @@ slurm_tool_version: 1.0.1
 slurmdbd_mysql_root_password: 'password'
 slurmdb_password: 'password'
 
-slurm_innodb_buffer_pool_size: '1024M'
+slurm_innodb_buffer_pool_size: '4096M'
 slurm_innodb_log_file_size: '64M'
 slurm_innodb_log_wait_timeout: '900'
 slurmdbd_mysql_service: 'mariadb'
@@ -110,6 +110,7 @@ slurm_slurmdbd_conf_template: 'files/slurmdbd.conf.j2'
 slurm_cgroup_conf_template: 'files/cgroup.conf.j2'
 slurm_gres_conf_template: 'files/gres.conf.j2'
 slurm_topology_conf_template: 'files/topology.conf.j2'
+slurm_spec_template: 'templates/slurm_26.05.spec.j2'
 
 slurm_epilog_script: 'files/epilog.j2'
 
