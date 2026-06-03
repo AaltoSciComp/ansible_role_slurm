@@ -31,7 +31,7 @@
 - name: Register source code archive name
   ansible.builtin.set_fact:
     rpmbuild_src: '{{ rpmbuild_src_url | basename }}'
-    rpmbuild_spec: "~/rpmbuild/SPECS/{{ rpmbuild_spec_template | replace('.j2', '') }}"
+    rpmbuild_spec: "~/rpmbuild/SPECS/{{ rpmbuild_spec_template | basename | regex_replace('\\.j2$', '')  }}"
 
 - name: Check if source code exists
   ansible.builtin.stat:
