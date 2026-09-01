@@ -23,6 +23,8 @@ slurm_calculate_checksum: true
 
 pmix_calculate_checksum: true
 
+slurm_mariadb_devel: 'MariaDB-devel'
+
 slurm_rpmbuild_features:
   ucx:
   hwloc:
